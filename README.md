@@ -3,6 +3,10 @@
 
 This component is still a work in progress. Basic functionality is there, but things may change at any time.
 
+# How To Use
+
+Look at the example project in the `example` folder. The example has a list of 100000 items, and when you click an item it adds that item's number to the total.
+
 # lustre_virtual_list
 
 [![Package Version](https://img.shields.io/hexpm/v/lustre_virtual_list)](https://hex.pm/packages/lustre_virtual_list)

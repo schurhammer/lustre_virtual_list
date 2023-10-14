@@ -8,13 +8,6 @@ import gleam/int
 import gleam/io
 import lustre_virtual_list.{virtual_list}
 
-fn render_int(num: Int) {
-  html.div(
-    [on_click(ItemClick(num)), class("item")],
-    [text("Item #" <> int.to_string(num))],
-  )
-}
-
 pub fn main() {
   let app = lustre.simple(init, update, view)
   let assert Ok(_) = lustre.start(app, "[data-lustre-app]", Nil)
@@ -25,8 +18,6 @@ pub fn main() {
 fn init(_) {
   0
 }
-
-// TODO try to separate the item events from model events
 
 type Msg {
   ItemClick(Int)
@@ -45,9 +36,22 @@ fn view(model) {
     [],
     [
       p([], [text("Click items to add: " <> count)]),
-      list.range(0, 10_000)
-      |> virtual_list(render_int, 24, 30, [class("list")]),
-      p([], [text("Version 2")]),
+      //
+      // create the virtual list!
+      //
+      virtual_list(
+        items: list.range(0, 100_000),
+        render: fn(item: Int) {
+          html.div(
+            [on_click(ItemClick(item)), class("item")],
+            [text("Item #" <> int.to_string(item))],
+          )
+        },
+        item_height: 24,
+        item_count: 30,
+        attributes: [class("list")],
+      ),
+      p([], [text("Version 3")]),
     ],
   )
 }
