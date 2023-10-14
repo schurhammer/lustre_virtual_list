@@ -1,17 +1,18 @@
 import lustre/attribute.{class, style}
 import lustre/element.{Element, element}
 import lustre
+import lustre/event
 import lustre/effect.{Effect}
 import lustre/element/html
 import gleam/list
-import gleam/dynamic.{Decoder}
+import gleam/dynamic.{Decoder, Dynamic}
 import gleam/int
 import gleam/io
 import gleam/map.{Map}
 
 pub fn virtual_list(
-  render_item: fn(a) -> Element(msg),
   items: List(a),
+  render_item: fn(a) -> Element(msg),
 ) -> Element(msg) {
   let _ = case
     lustre.is_browser(),
@@ -27,7 +28,10 @@ pub fn virtual_list(
       )
     _, _ -> Ok(Nil)
   }
-  let attributes = [attribute.property("slot", Slot(render_item, items))]
+  let attributes = [
+    style([#("display", "block"), #("height", "100%")]),
+    attribute.property("slot", Slot(render_item, items)),
+  ]
   element("lustre-virtual-list", attributes, [])
 }
 
@@ -48,6 +52,7 @@ fn init() {
 type Msg(a, msg) {
   OnAttrChange(Attr(a, msg))
   OnInnerMsg(msg)
+  OnScroll(Dynamic)
 }
 
 type Attr(a, msg) {
@@ -60,6 +65,10 @@ fn update(
 ) -> #(Model(a, msg), Effect(Msg(a, msg))) {
   case msg {
     OnAttrChange(SlotAttr(slot)) -> #(Model(slot), effect.none())
+    OnScroll(dyn) -> {
+      io.debug(dyn)
+      #(model, effect.none())
+    }
     _ -> #(model, effect.none())
   }
 }
@@ -73,23 +82,43 @@ fn on_attribute_change() -> Map(String, Decoder(Msg(a, msg))) {
 }
 
 fn view(model: Model(a, msg)) -> Element(Msg(a, msg)) {
-  io.debug("view model")
-  io.debug(model)
+  let item_height = 20
+  let visible_length = 10
+  let scroll = 200
+  let scroll_items = scroll / item_height
+  let items = model.slot.items
+  let items_length = list.length(items)
+  let visible =
+    items
+    |> list.take(visible_length)
+  let pad_total = { items_length - visible_length } * item_height
+  let pad_top = scroll_items * item_height
+  let pad_bottom = pad_total - pad_top
   html.div(
-    [class("virtual-list")],
+    [
+      attribute.class("virtual-container"),
+      style([#("height", "100%"), #("overflow", "scroll")]),
+      event.on("scroll", fn(dyn) { Ok(OnScroll(dyn)) }),
+    ],
     [
       html.div(
         [
-          attribute.class("virtual-view"),
+          attribute.class("virtual-viewport"),
           style([
-            #("padding-top", int.to_string(0)),
-            #("padding-bottom", int.to_string(0)),
+            #("padding-top", int.to_string(pad_top) <> "px"),
+            #("padding-bottom", int.to_string(pad_bottom) <> "px"),
           ]),
         ],
         list.map(
-          model.slot.items,
+          visible,
           fn(item) {
-            html.div([class("virtual-item")], [model.slot.render(item)])
+            html.div(
+              [
+                class("virtual-item"),
+                style([#("height", int.to_string(item_height) <> "px")]),
+              ],
+              [model.slot.render(item)],
+            )
             |> element.map(fn(msg) { OnInnerMsg(msg) })
           },
         ),
