@@ -10,12 +10,17 @@ import gleam/dynamic.{Decoder, Dynamic}
 import gleam/int
 import gleam/map.{Map}
 
-// render a virtual list of items
-// items: the list of items to virtualise
-// render: a function that renders an item
-// item_height: you must specify the height of an item
-// item_count: you must specify how many items to render at most
-// attributes: optional attributes (e.g. item event handler, styles)
+/// render a virtual list of items
+/// 
+/// items: the list of items to virtualise
+/// 
+/// render: a function that renders an item
+/// 
+/// item_height: you must specify the height of an item
+/// 
+/// item_count: you must specify how many items to render at most
+/// 
+/// attributes: optional attributes (e.g. item event handler, styles)
 pub fn virtual_list(
   items items: List(a),
   render render_item: fn(a) -> Element(msg),
@@ -45,11 +50,13 @@ pub fn virtual_list(
   element("lustre-virtual-list", attributes, [])
 }
 
-pub type ItemEvent(a, msg) {
+type ItemEvent(a, msg) {
   ItemEvent(item: a, msg: msg)
 }
 
-// handle events on items inside the virtual list
+/// handle events on items inside the virtual list
+/// 
+/// the handler receives the item data and the event message
 pub fn on_item_event(handler: fn(a, msg) -> msg) -> Attribute(msg) {
   use event <- event.on("item_event")
   event
