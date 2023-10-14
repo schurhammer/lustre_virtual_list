@@ -8,6 +8,7 @@ import gleam/list
 import gleam/result
 import gleam/dynamic.{Decoder, Dynamic}
 import gleam/int
+import gleam/function
 import gleam/map.{Map}
 
 /// render a virtual list of items
@@ -20,7 +21,7 @@ import gleam/map.{Map}
 /// 
 /// item_count: you must specify how many items to render at most
 /// 
-/// attributes: optional attributes (e.g. item event handler, styles)
+/// attributes: optional attributes (e.g. styles)
 pub fn virtual_list(
   items items: List(a),
   render render_item: fn(a) -> Element(msg),
@@ -45,23 +46,18 @@ pub fn virtual_list(
   let attributes = [
     style([#("display", "block"), #("height", "100%")]),
     attribute.property("items", #(items, render_item, item_height, item_count)),
+    passthrough_item_event(),
     ..attributes
   ]
   element("lustre-virtual-list", attributes, [])
 }
 
-type ItemEvent(a, msg) {
-  ItemEvent(item: a, msg: msg)
-}
-
-/// handle events on items inside the virtual list
-/// 
-/// the handler receives the item data and the event message
-pub fn on_item_event(handler: fn(a, msg) -> msg) -> Attribute(msg) {
+/// handle events on items inside the virtual list to pass them on to the parent
+fn passthrough_item_event() -> Attribute(msg) {
   use event <- event.on("item_event")
   event
   |> dynamic.field("detail", fn(x) { Ok(dynamic.unsafe_coerce(x)) })
-  |> result.map(fn(x: ItemEvent(a, msg)) { handler(x.item, x.msg) })
+  |> result.map(function.identity)
 }
 
 type Model(a, msg) {
@@ -94,7 +90,7 @@ type Msg(a, msg) {
     item_count: Int,
   )
   OnScroll(Int)
-  OnInnerMsg(a, msg)
+  OnInnerMsg(msg)
 }
 
 fn update(
@@ -113,10 +109,7 @@ fn update(
       effect.none(),
     )
     OnScroll(y) -> #(Model(..model, scroll_top: y), effect.none())
-    OnInnerMsg(item, msg) -> #(
-      model,
-      event.emit("item_event", ItemEvent(item, msg)),
-    )
+    OnInnerMsg(msg) -> #(model, event.emit("item_event", msg))
   }
 }
 
@@ -138,7 +131,7 @@ fn on_attribute_change() -> Map(String, Decoder(Msg(a, msg))) {
 
 fn view(model: Model(a, msg)) -> Element(Msg(a, msg)) {
   case model.item_height {
-    0 -> element.text("")
+    0 -> html.div([attribute.class("virtual-container")], [])
     _ -> {
       let item_height = model.item_height
       let visible_length = model.item_count
@@ -178,7 +171,7 @@ fn view(model: Model(a, msg)) -> Element(Msg(a, msg)) {
                   ],
                   [model.render(item)],
                 )
-                |> element.map(fn(msg) { OnInnerMsg(item, msg) })
+                |> element.map(OnInnerMsg)
               },
             ),
           ),
