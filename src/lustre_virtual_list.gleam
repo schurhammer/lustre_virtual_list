@@ -90,6 +90,7 @@ fn view(model: Model(a, msg)) -> Element(Msg(a, msg)) {
   let items_length = list.length(items)
   let visible =
     items
+    |> list.drop(scroll_items)
     |> list.take(visible_length)
   let pad_total = { items_length - visible_length } * item_height
   let pad_top = scroll_items * item_height
@@ -98,8 +99,8 @@ fn view(model: Model(a, msg)) -> Element(Msg(a, msg)) {
     [
       attribute.class("virtual-container"),
       style([#("height", "100%"), #("overflow", "scroll")]),
-      event.on("scroll", fn(dyn) { Ok(OnScroll(dyn)) }),
     ],
+    // event.on("scroll", fn(dyn) { Ok(OnScroll(dyn)) }),
     [
       html.div(
         [
@@ -125,5 +126,4 @@ fn view(model: Model(a, msg)) -> Element(Msg(a, msg)) {
       ),
     ],
   )
-  // html.div([], [element.text("hello world")])
 }
