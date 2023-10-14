@@ -1,7 +1,7 @@
 
 # Work In Progress
 
-This component is not ready for use yet.
+This component is still a work in progress. Basic functionality is there, but things may change at any time.
 
 # lustre_virtual_list
 
