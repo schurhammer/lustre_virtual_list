@@ -4,7 +4,7 @@ version = "0.1.0"
 # Fill out these fields if you intend to generate HTML documentation or publish
 # your project to the Hex package manager.
 #
-description = "A virtual list componenet for lustre."
+description = "A virtual list component for lustre."
 licences = ["Apache-2.0"]
 repository = { type = "github", user = "schurhammer", repo = "lustre_virtual_list" }
 # links = [{ title = "Website", href = "https://gleam.run" }]
