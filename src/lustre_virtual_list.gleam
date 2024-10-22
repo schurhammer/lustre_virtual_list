@@ -1,26 +1,26 @@
-import lustre/attribute.{Attribute, class, style}
-import lustre/element.{Element, element}
-import lustre
-import lustre/event
-import lustre/effect.{Effect}
-import lustre/element/html
-import gleam/list
-import gleam/result
 import gleam/dynamic.{Decoder, Dynamic}
-import gleam/int
 import gleam/function
+import gleam/int
+import gleam/list
 import gleam/map.{Map}
+import gleam/result
+import lustre
+import lustre/attribute.{Attribute, class, style}
+import lustre/effect.{Effect}
+import lustre/element.{Element, element}
+import lustre/element/html
+import lustre/event
 
 /// render a virtual list of items
-/// 
+///
 /// items: the list of items to virtualise
-/// 
+///
 /// render: a function that renders an item
-/// 
+///
 /// item_height: you must specify the height of an item
-/// 
+///
 /// item_count: you must specify how many items to render at most
-/// 
+///
 /// attributes: optional attributes (e.g. styles)
 pub fn virtual_list(
   items items: List(a),
@@ -115,18 +115,15 @@ fn update(
 
 fn on_attribute_change() -> Map(String, Decoder(Msg(a, msg))) {
   map.new()
-  |> map.insert(
-    "items",
-    fn(dyn) {
-      use items <- result.try(dynamic.element(0, dynamic.dynamic)(dyn))
-      use render <- result.try(dynamic.element(1, dynamic.dynamic)(dyn))
-      use item_height <- result.try(dynamic.element(2, dynamic.int)(dyn))
-      use item_count <- result.try(dynamic.element(3, dynamic.int)(dyn))
-      let items: List(a) = dynamic.unsafe_coerce(items)
-      let render: fn(a) -> Element(msg) = dynamic.unsafe_coerce(render)
-      Ok(OnAttrChange(items, render, item_height, item_count))
-    },
-  )
+  |> map.insert("items", fn(dyn) {
+    use items <- result.try(dynamic.element(0, dynamic.dynamic)(dyn))
+    use render <- result.try(dynamic.element(1, dynamic.dynamic)(dyn))
+    use item_height <- result.try(dynamic.element(2, dynamic.int)(dyn))
+    use item_count <- result.try(dynamic.element(3, dynamic.int)(dyn))
+    let items: List(a) = dynamic.unsafe_coerce(items)
+    let render: fn(a) -> Element(msg) = dynamic.unsafe_coerce(render)
+    Ok(OnAttrChange(items, render, item_height, item_count))
+  })
 }
 
 fn view(model: Model(a, msg)) -> Element(Msg(a, msg)) {
@@ -161,19 +158,16 @@ fn view(model: Model(a, msg)) -> Element(Msg(a, msg)) {
                 #("padding-bottom", int.to_string(pad_bottom) <> "px"),
               ]),
             ],
-            list.map(
-              visible,
-              fn(item) {
-                html.div(
-                  [
-                    class("virtual-item"),
-                    style([#("height", int.to_string(item_height) <> "px")]),
-                  ],
-                  [model.render(item)],
-                )
-                |> element.map(OnInnerMsg)
-              },
-            ),
+            list.map(visible, fn(item) {
+              html.div(
+                [
+                  class("virtual-item"),
+                  style([#("height", int.to_string(item_height) <> "px")]),
+                ],
+                [model.render(item)],
+              )
+              |> element.map(OnInnerMsg)
+            }),
           ),
         ],
       )
