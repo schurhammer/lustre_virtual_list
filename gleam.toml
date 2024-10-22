@@ -10,8 +10,8 @@ repository = { type = "github", user = "schurhammer", repo = "lustre_virtual_lis
 # links = [{ title = "Website", href = "https://gleam.run" }]
 
 [dependencies]
-gleam_stdlib = "~> 0.31"
+gleam_stdlib = "0.37.0"
 lustre = "~> 3.0"
 
 [dev-dependencies]
-gleeunit = "~> 0.10"
+gleeunit = ">= 1.2.0 and < 2.0.0"

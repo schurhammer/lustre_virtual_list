@@ -11,7 +11,7 @@ version = "0.1.0"
 target = "javascript"
 
 [dependencies]
-gleam_stdlib = "~> 0.31"
+gleam_stdlib = "0.37.0"
 lustre = "~> 3.0"
 lustre_virtual_list = { path = "../" }
 

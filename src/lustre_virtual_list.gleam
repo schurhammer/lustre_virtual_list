@@ -1,13 +1,13 @@
-import gleam/dynamic.{Decoder, Dynamic}
+import gleam/dict.{type Dict}
+import gleam/dynamic.{type Decoder, type Dynamic}
 import gleam/function
 import gleam/int
 import gleam/list
-import gleam/map.{Map}
 import gleam/result
 import lustre
-import lustre/attribute.{Attribute, class, style}
-import lustre/effect.{Effect}
-import lustre/element.{Element, element}
+import lustre/attribute.{type Attribute, class, style}
+import lustre/effect.{type Effect}
+import lustre/element.{type Element, element}
 import lustre/element/html
 import lustre/event
 
@@ -113,9 +113,9 @@ fn update(
   }
 }
 
-fn on_attribute_change() -> Map(String, Decoder(Msg(a, msg))) {
-  map.new()
-  |> map.insert("items", fn(dyn) {
+fn on_attribute_change() -> Dict(String, Decoder(Msg(a, msg))) {
+  dict.new()
+  |> dict.insert("items", fn(dyn) {
     use items <- result.try(dynamic.element(0, dynamic.dynamic)(dyn))
     use render <- result.try(dynamic.element(1, dynamic.dynamic)(dyn))
     use item_height <- result.try(dynamic.element(2, dynamic.int)(dyn))
