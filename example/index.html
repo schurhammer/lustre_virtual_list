@@ -10,10 +10,12 @@
             body {
                 margin: 0;
                 padding: 0;
+                background: #292d3e;
+                color: #fefefc;
             }
             #app {
                 display: grid;
-                grid-template-rows: 1fr 300px;
+                grid-template-rows: auto 4fr auto 1fr;
                 overflow: hidden;
 
                 box-sizing: border-box;
@@ -22,13 +24,22 @@
                 gap: 1em;
             }
             .list {
-                background: slategray;
+                box-sizing: border-box;
+                background: #333;
+                border: 1px solid #1e1e1e;
+                border-radius: 0.25em;
             }
-            .item {
+            .item, .item.clickable {
+                color: #ffaff3;
+                font-size: 16px;
+                line-height: 24px;
+                padding: 0 0.5em;
+            }
+            .item.clickable {
                 cursor: pointer;
             }
-            .item:hover {
-                background: lightslategray;
+            .item.clickable:hover {
+                background: #444;
             }
         </style>
 

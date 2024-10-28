@@ -139,7 +139,7 @@ fn view(model: Model(a, msg)) -> Element(Msg(a, msg)) {
       html.div(
         [
           attribute.class("virtual-container"),
-          style([#("height", "100%"), #("overflow-y", "scroll")]),
+          style([#("height", "100%"), #("overflow-y", "auto")]),
           on_scroll(fn(y) { Scroll(y) }),
         ],
         [

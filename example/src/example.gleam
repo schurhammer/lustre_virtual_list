@@ -46,10 +46,11 @@ fn view(model: Model) -> Element(Msg) {
     //
     // Create a virtual list of clickable items!
     //
+    text("Clickable Items:"),
     virtual_list(
       items: list.range(1, 100_000),
       render: fn(item: Int) {
-        html.div([on_click(ItemClick(item)), class("item")], [
+        html.div([on_click(ItemClick(item)), class("item clickable")], [
           text("Item #" <> int.to_string(item)),
         ])
       },
@@ -60,6 +61,7 @@ fn view(model: Model) -> Element(Msg) {
     //
     // Create a virtual list of click events!
     //
+    text("Click Events:"),
     virtual_list(
       items: model.events,
       render: fn(event: String) { html.div([class("item")], [text(event)]) },
