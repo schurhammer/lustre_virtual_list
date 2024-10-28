@@ -11,9 +11,10 @@ version = "0.1.0"
 target = "javascript"
 
 [dependencies]
-gleam_stdlib = "~> 0.31"
-lustre = "~> 3.0"
+gleam_stdlib = ">= 0.40.0 and < 1.0.0"
+lustre = ">= 4.5.1 and < 5.0.0"
 lustre_virtual_list = { path = "../" }
 
 [dev-dependencies]
-gleeunit = "~> 0.10"
+gleeunit = ">= 1.2.0 and < 2.0.0"
+lustre_dev_tools = ">= 1.6.0 and < 2.0.0"
